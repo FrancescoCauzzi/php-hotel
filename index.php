@@ -68,14 +68,23 @@
     $table_top_without_park .= '</thead>';
     $table_top_without_park .= '<tbody>';
 
-
-
     // table bottom
     $table_bottom = '</tbody>';
     $table_bottom .= '</table>';
     $table_bottom .= '</div>';
 
-
+    // all hotels 
+    $all_hotels = '';
+    foreach ($hotels as $index => $hotel) {
+        $all_hotels .= '<tr>';
+        $all_hotels .= '<th scope="row">' . $index + 1 . '</th>';
+        $all_hotels .= '<td>' . $hotel['name'] . '</td>';
+        $all_hotels .= '<td>' . $hotel['description'] . '</td>';
+        $all_hotels .= '<td>' . ($hotel['parking'] ? 'Yes' : 'No') . '</td>';
+        $all_hotels .= '<td>' . $hotel['vote'] . '</td>';
+        $all_hotels .= '<td>' . $hotel['distance_to_center'] . ' km</td>';
+        $all_hotels .= '</tr>';
+    };
 
 ?>
 
@@ -98,31 +107,80 @@
         <section class='mb-5'>
             <h2>Bonus</h2>
             <!-- The action attribute of the form is set to htmlspecialchars($_SERVER["PHP_SELF"]), which is a security measure to prevent XSS attacks. This ensures that the form data is submitted to the same PHP script that generated the form. -->
-            <form class="mb-3 form-check" method='get' action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>">
-                <input type="checkbox" class="form-check-input" id="has-hotel" name='has_hotel[]'>
-                <label class="form-check-label" for="exampleCheck1">Parking lot</label>
-                <br>            
-                <input type="submit" name="submit" value="Submit">
+            <form class="mb-3 form-check d-flex flex-column" method='get' action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>">
+                <div>                
+                    <label class="form-check-label" for="exampleCheck1">Parking lot</label>
+                    <input type="checkbox" class="form-check-input" id="has-hotel" name='has_parking[]'>
+                </div>
+                <div>
+                    <label for="vote">Vote:</label>
+                    <input type="number" id="vote" name="vote" min="0" max="5" step="1">
+                </div>
+                <div>
+                    <input type="submit" name="submit" value="Submit">
+                </div>                    
             </form>
-            <?php
-                
-                echo $table_top;
-                foreach ($hotels as $index => $hotel){
-                    if(isset($_GET['has_hotel']) && $hotel['parking'] == true ){
-                        echo '<tr>';
-                        echo '<th scope="row"> '  . $index + 1 . '</th>';
-                        echo '<td>' . $hotel['name'] . '</td>';
-                        echo '<td>' . $hotel['description'] . '</td>'; 
-                        echo '<td>' . ($hotel['parking'] ? 'Yes' : 'No') . '</td>';
-                        echo '<td>' . $hotel['vote'] . '</td>';
-                        echo '<td>' . $hotel['distance_to_center'] . ' km</td>';
-                        echo '</tr>';
-                    }else{
-                        echo '';
-                    }                    
-                }
-                echo $table_bottom;
+            <?php      
+            var_dump(isset($_GET['has_parking']));  
+            var_dump(isset($_GET['vote']));     
+            var_dump($_GET['vote'] );      
 
+                echo $table_top;
+                
+                    if(isset($_GET['has_parking']) && !empty($_GET['vote'])){
+                        echo 'vote:' . $_GET['vote'];
+                        foreach ($hotels as $index => $hotel){
+                            if(($hotel['parking'] == true) &&  $hotel['vote'] >= $_GET['vote'] ) {
+                                echo 'park only';
+                                echo '<tr>';
+                                echo '<th scope="row">' . $index + 1 . '</th>';
+                                echo '<td>' . $hotel['name'] . '</td>';
+                                echo '<td>' . $hotel['description'] . '</td>';
+                                echo '<td>' . ($hotel['parking'] ? 'Yes' : 'No') . '</td>';
+                                echo '<td>' . $hotel['vote']  . '</td>';
+                                echo '<td>' . $hotel['distance_to_center'] . ' km</td>';
+                                echo '</tr>';
+                            }
+
+                        }
+
+                    }elseif(!isset($_GET['has_parking']) && !empty($_GET['vote'])){
+                        foreach ($hotels as $index => $hotel){
+                            if( $hotel['vote'] >= $_GET['vote']) {
+                                echo 'park only';
+                                echo '<tr>';
+                                echo '<th scope="row">' . $index + 1 . '</th>';
+                                echo '<td>' . $hotel['name'] . '</td>';
+                                echo '<td>' . $hotel['description'] . '</td>';
+                                echo '<td>' . ($hotel['parking'] ? 'Yes' : 'No') . '</td>';
+                                echo '<td>' . $hotel['vote']  . '</td>';
+                                echo '<td>' . $hotel['distance_to_center'] . ' km</td>';
+                                echo '</tr>';
+                            }
+
+                        }
+
+                                                                        
+                                                                                                
+                    }elseif(isset($_GET['has_parking']) && empty($_GET['vote'])){
+                        foreach ($hotels as $index => $hotel){
+                            if(($hotel['parking'] == true)) {                            
+                                echo '<tr>';
+                                echo '<th scope="row">' . $index + 1 . '</th>';
+                                echo '<td>' . $hotel['name'] . '</td>';
+                                echo '<td>' . $hotel['description'] . '</td>';
+                                echo '<td>' . ($hotel['parking'] ? 'Yes' : 'No') . '</td>';
+                                echo '<td>' . $hotel['vote']  . '</td>';
+                                echo '<td>' . $hotel['distance_to_center'] . ' km</td>';
+                                echo '</tr>';
+                            }
+                        }
+                    }else{
+                        echo 'last' . $all_hotels;
+                    }     
+                             
+                
+                echo $table_bottom;
 
             
             ?>
@@ -145,16 +203,7 @@
                 // echo '<div class="container">';
                 
                 echo $table_top;
-                foreach ($hotels as $index => $hotel) {
-                    echo '<tr>';
-                    echo '<th scope="row">' . $index + 1 . '</th>';
-                    echo '<td>' . $hotel['name'] . '</td>';
-                    echo '<td>' . $hotel['description'] . '</td>';
-                    echo '<td>' . ($hotel['parking'] ? 'Yes' : 'No') . '</td>';
-                    echo '<td>' . $hotel['vote'] . '</td>';
-                    echo '<td>' . $hotel['distance_to_center'] . ' km</td>';
-                    echo '</tr>';
-                }
+                echo $all_hotels;                
                 echo $table_bottom;
 
                 
