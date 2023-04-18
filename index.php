@@ -147,7 +147,7 @@
                     }elseif(!isset($_GET['has_parking']) && !empty($_GET['vote'])){
                         foreach ($hotels as $index => $hotel){
                             if( $hotel['vote'] >= $_GET['vote']) {
-                                echo 'park only';
+                                
                                 echo '<tr>';
                                 echo '<th scope="row">' . $index + 1 . '</th>';
                                 echo '<td>' . $hotel['name'] . '</td>';
