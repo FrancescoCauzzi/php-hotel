@@ -121,17 +121,17 @@
                 </div>                    
             </form>
             <?php      
-            var_dump(isset($_GET['has_parking']));  
-            var_dump(isset($_GET['vote']));     
-            var_dump($_GET['vote'] );      
+            // var_dump(isset($_GET['has_parking']));  
+            // var_dump(isset($_GET['vote']));     
+            // var_dump($_GET['vote'] );      
 
                 echo $table_top;
                 
                     if(isset($_GET['has_parking']) && !empty($_GET['vote'])){
-                        echo 'vote:' . $_GET['vote'];
+                        
                         foreach ($hotels as $index => $hotel){
                             if(($hotel['parking'] == true) &&  $hotel['vote'] >= $_GET['vote'] ) {
-                                echo 'park only';
+                                
                                 echo '<tr>';
                                 echo '<th scope="row">' . $index + 1 . '</th>';
                                 echo '<td>' . $hotel['name'] . '</td>';
@@ -139,10 +139,10 @@
                                 echo '<td>' . ($hotel['parking'] ? 'Yes' : 'No') . '</td>';
                                 echo '<td>' . $hotel['vote']  . '</td>';
                                 echo '<td>' . $hotel['distance_to_center'] . ' km</td>';
-                                echo '</tr>';
-                            }
-
-                        }
+                                echo '</tr>';                           
+                            
+                            } 
+                        }                      
 
                     }elseif(!isset($_GET['has_parking']) && !empty($_GET['vote'])){
                         foreach ($hotels as $index => $hotel){
@@ -157,10 +157,7 @@
                                 echo '<td>' . $hotel['distance_to_center'] . ' km</td>';
                                 echo '</tr>';
                             }
-
-                        }
-
-                                                                        
+                        }                     
                                                                                                 
                     }elseif(isset($_GET['has_parking']) && empty($_GET['vote'])){
                         foreach ($hotels as $index => $hotel){
@@ -175,6 +172,7 @@
                                 echo '</tr>';
                             }
                         }
+                        
                     }else{
                         echo 'last' . $all_hotels;
                     }     
