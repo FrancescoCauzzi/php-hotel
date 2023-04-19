@@ -42,31 +42,18 @@
     $length = count($hotels);
     
     // table top
-    $table_top = '<table class="table table-striped">';
+    $table_top = '';
+    $table_top .= '<table class="table table-striped">';
     $table_top .= '<thead>';
     $table_top .= '<tr>';
     $table_top .= '<th scope="col">#</th>';
-    $table_top .= '<th scope="col">Name</th>';
-    $table_top .= '<th scope="col">Description</th>';
-    $table_top .= '<th scope="col">Parking</th>';
-    $table_top .= '<th scope="col">Vote</th>';
-    $table_top .= '<th scope="col">Distance to Center</th>';
+    foreach ($hotels[0] as $chiave => $valore){        
+        $table_top .= '<th scope="col">'. ucfirst($chiave) . '</th>';              
+    }
     $table_top .= '</tr>';
     $table_top .= '</thead>';
-    $table_top .= '<tbody>';
-
-    // table top
-    $table_top_without_park = '<table class="table table-striped">';
-    $table_top_without_park .= '<thead>';
-    $table_top_without_park .= '<tr>';
-    $table_top_without_park .= '<th scope="col">#</th>';
-    $table_top_without_park .= '<th scope="col">Name</th>';
-    $table_top_without_park .= '<th scope="col">Description</th>';    
-    $table_top_without_park .= '<th scope="col">Vote</th>';
-    $table_top_without_park .= '<th scope="col">Distance to Center</th>';
-    $table_top_without_park .= '</tr>';
-    $table_top_without_park .= '</thead>';
-    $table_top_without_park .= '<tbody>';
+    $table_top .= '<tbody>'; 
+      
 
     // table bottom
     $table_bottom = '</tbody>';
@@ -85,6 +72,33 @@
         $all_hotels .= '<td>' . $hotel['distance_to_center'] . ' km</td>';
         $all_hotels .= '</tr>';
     };
+
+    // my table
+    $myArrayTest = [];
+    $my_table = '';
+    foreach ($myArrayTest as $index => $element){
+        $my_table .= '<tr>';
+        $my_table .= '<th scope="row">' . $index + 1 . '</th>';
+        $my_table .= '<td>' . $element['name'] . '</td>';
+        $my_table .= '<td>' . $element['description'] . '</td>';
+        $my_table .= '<td>' . ($element['parking'] ? 'Yes' : 'No') . '</td>';
+        $my_table .= '<td>' . $element['vote']  . '</td>';
+        $my_table .= '<td>' . $element['distance_to_center'] . ' km</td>';
+        $my_table .= '</tr>';          
+    }       
+    
+    // no results
+    $no_result_found = '<tr>';
+    $no_result_found .= '<th scope="row">' . '??' . '</th>';
+    $no_result_found .= '<td>' . 'No results found' . '</td>';  
+    $no_result_found .= '<td>' . '??' . '</td>';                        
+    $no_result_found .= '<td>' . '??' . '</td>';                        
+    $no_result_found .= '<td>' . '??' . '</td>';                        
+    $no_result_found .= '<td>' . '??' . '</td>';                       
+    $no_result_found .= '</tr>';
+
+    
+    
 
 ?>
 
@@ -128,68 +142,72 @@
                 echo $table_top;
                 
                 if(isset($_GET['has_parking']) && !empty($_GET['vote'])){
-                        $myArray = [];
-                        
-                        foreach ($hotels as $index => $hotel){
-                            if(($hotel['parking'] == true) &&  $hotel['vote'] >= $_GET['vote'] ) {
-                                array_push($myArray, $hotel);                          
-                            
-                            } 
-                        }   
-                        foreach ($myArray as $index => $element){
-                            echo '<tr>';
-                            echo '<th scope="row">' . $index + 1 . '</th>';
-                            echo '<td>' . $element['name'] . '</td>';
-                            echo '<td>' . $element['description'] . '</td>';
-                            echo '<td>' . ($element['parking'] ? 'Yes' : 'No') . '</td>';
-                            echo '<td>' . $element['vote']  . '</td>';
-                            echo '<td>' . $element['distance_to_center'] . ' km</td>';
-                            echo '</tr>';  
-                        }                   
+                    $myArray = [];
+                    
+                    foreach ($hotels as $index => $hotel){
+                        if(($hotel['parking'] == true) &&  $hotel['vote'] >= $_GET['vote'] ) {
+                            array_push($myArray, $hotel);                        
+                        } 
+                    }   
+                    if(empty($myArray)){
+                        echo $no_result_found;
+                         
 
-                    }elseif(!isset($_GET['has_parking']) && !empty($_GET['vote'])){
-                        $myArray = [];
-                        foreach ($hotels as $index => $hotel){
-                            if( $hotel['vote'] >= $_GET['vote']) {
-                                
-                                array_push($myArray, $hotel);                               
-                                
-                            }
-                        }   
-                        foreach ($myArray as $index => $element){
-                            echo '<tr>';
-                            echo '<th scope="row">' . $index + 1 . '</th>';
-                            echo '<td>' . $element['name'] . '</td>';
-                            echo '<td>' . $element['description'] . '</td>';
-                            echo '<td>' . ($element['parking'] ? 'Yes' : 'No') . '</td>';
-                            echo '<td>' . $element['vote']  . '</td>';
-                            echo '<td>' . $element['distance_to_center'] . ' km</td>';
-                            echo '</tr>';  
-                        }                          
-                                                                                                
-                    }elseif(isset($_GET['has_parking']) && empty($_GET['vote'])){
-                        $myArray = [];
-                        foreach ($hotels as $index => $hotel){
-                            if(($hotel['parking'] == true)) {                            
-                                
-                                array_push($myArray, $hotel);
-                            }
-                        }
-                        foreach ($myArray as $index => $element){
-                            echo '<tr>';
-                            echo '<th scope="row">' . $index + 1 . '</th>';
-                            echo '<td>' . $element['name'] . '</td>';
-                            echo '<td>' . $element['description'] . '</td>';
-                            echo '<td>' . ($element['parking'] ? 'Yes' : 'No') . '</td>';
-                            echo '<td>' . $element['vote']  . '</td>';
-                            echo '<td>' . $element['distance_to_center'] . ' km</td>';
-                            echo '</tr>';  
-                        }      
-
-                        
                     }else{
-                        echo 'last' . $all_hotels;
-                    }     
+                        foreach ($myArray as $index => $element){
+                            echo '<tr>';
+                            echo '<th scope="row">' . $index + 1 . '</th>';
+                            echo '<td>' . $element['name'] . '</td>';
+                            echo '<td>' . $element['description'] . '</td>';
+                            echo '<td>' . ($element['parking'] ? 'Yes' : 'No') . '</td>';
+                            echo '<td>' . $element['vote']  . '</td>';
+                            echo '<td>' . $element['distance_to_center'] . ' km</td>';
+                            echo '</tr>';  
+                        }     
+
+                    }
+                               
+
+                }elseif(!isset($_GET['has_parking']) && !empty($_GET['vote'])){
+                    $myArray = [];
+                    foreach ($hotels as $index => $hotel){
+                        if( $hotel['vote'] >= $_GET['vote']) {
+                            
+                            array_push($myArray, $hotel);                               
+                            
+                        }
+                    }   
+                    foreach ($myArray as $index => $element){
+                        echo '<tr>';
+                        echo '<th scope="row">' . $index + 1 . '</th>';
+                        echo '<td>' . $element['name'] . '</td>';
+                        echo '<td>' . $element['description'] . '</td>';
+                        echo '<td>' . ($element['parking'] ? 'Yes' : 'No') . '</td>';
+                        echo '<td>' . $element['vote']  . '</td>';
+                        echo '<td>' . $element['distance_to_center'] . ' km</td>';
+                        echo '</tr>';  
+                    }                               
+                }elseif(isset($_GET['has_parking']) && empty($_GET['vote'])){
+                    $myArray = [];
+                    foreach ($hotels as $index => $hotel){
+                        if(($hotel['parking'] == true)) {                            
+                            
+                            array_push($myArray, $hotel);
+                        }
+                    }
+                    foreach ($myArray as $index => $element){
+                        echo '<tr>';
+                        echo '<th scope="row">' . $index + 1 . '</th>';
+                        echo '<td>' . $element['name'] . '</td>';
+                        echo '<td>' . $element['description'] . '</td>';
+                        echo '<td>' . ($element['parking'] ? 'Yes' : 'No') . '</td>';
+                        echo '<td>' . $element['vote']  . '</td>';
+                        echo '<td>' . $element['distance_to_center'] . ' km</td>';
+                        echo '</tr>';  
+                    }      
+                }else{
+                    echo $all_hotels;
+                }     
                              
                 
                 echo $table_bottom;
@@ -210,7 +228,7 @@
 
             
             <div class="container">
-                <h4 class="">All the hotels</h4>        
+                <h4 class="">All hotels</h4>        
                 <?php
                 // echo '<div class="container">';
                 
